@@ -5,31 +5,35 @@ using UnityEngine;
 
 //to do 
 /**
- * cooldown on press dash
- * timer then push back against dash to prevent floating
- * while player is not in contact with "surface", decrease force
- * dash on diagonal axis
- * stop gravity flipping mid air
+ * stop gravity flipping mid air?
+ * add projectiles
+ * add enemies
+ * add score 
  * 
  */
 public class PlayerMovement : MonoBehaviour
 {
     Rigidbody2D player;
+    [Header("Movement")]
     [SerializeField] float moveSpeed = 1f;
+    [SerializeField] float maxSpeed = 1f;
+
+    [Header("Dash")]
     [SerializeField] float dashSpeed = 1f;
     [SerializeField] float dashTime = 1f;
+    [SerializeField] float dashCooldown = 1f;
+    float lastDash = 0f;
 
     bool movementEnabled = true;
+    bool limitVelocity = true;
     float totalMovement;
     Vector2 playerVel;
 
-    // Start is called before the first frame update
     void Start()
     {
         player = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
     void Update()
     {
 
@@ -50,36 +54,18 @@ public class PlayerMovement : MonoBehaviour
         {
             player.AddForce(new Vector2(moveSpeed * Input.GetAxisRaw("Horizontal"), 0));
         }
-    }
 
-    private void FlipGravity()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (player.velocity.x > maxSpeed && limitVelocity)
         {
-            player.gravityScale = -(player.gravityScale);
+            player.velocity = new Vector2(maxSpeed, player.velocity.y);
+        }
+        else if (player.velocity.x < -maxSpeed && limitVelocity)
+        {
+            player.velocity = new Vector2(-maxSpeed, player.velocity.y);
+
         }
     }
 
-    private void PlayerDash()
-    {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            LockMovement();
-            playerVel = player.velocity;
-
-            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
-            {
-                player.AddForce(new Vector2(dashSpeed, 0), ForceMode2D.Impulse);
-                Invoke("CounterDash", dashTime);
-            }
-            else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
-            {
-                player.AddForce(new Vector2(-dashSpeed, 0), ForceMode2D.Impulse);
-                Invoke("CounterDash", dashTime);
-            }
-
-        }
-    }
     private void CorrectRotation()
     {
         if (gameObject.transform.eulerAngles.z != 0)
@@ -92,24 +78,65 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+
+
+    private void FlipGravity()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            player.gravityScale = -(player.gravityScale);
+        }
+    }
+
+
+
+    private void PlayerDash()
+    {
+
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+
+
+            if (Time.time - lastDash < dashCooldown)
+            {
+                return;
+            }
+            LockMovement();
+            playerVel = player.velocity;
+            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+            {
+                player.AddForce(new Vector2(dashSpeed, 0), ForceMode2D.Impulse);
+                Invoke("CompleteDash", dashTime);
+            }
+            else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+            {
+                player.AddForce(new Vector2(-dashSpeed, 0), ForceMode2D.Impulse);
+                Invoke("CompleteDash", dashTime);
+            }
+
+        }
+
+
+    }
+
     private void LockMovement()
     {
         movementEnabled = false;
+        limitVelocity = false;
+    }
+
+    private void CompleteDash()
+    {
+        CounterDash();
+        movementEnabled = true;
+        limitVelocity = true;
+        lastDash = Time.time;
     }
 
     private void CounterDash()
     {
-        //if (player.velocity.x > 0)
-        //{
-
         player.velocity = new Vector2(playerVel.x, player.velocity.y);
-        movementEnabled = true;
-        //}
-        //else if (player.velocity.x < 0)
-        //{
-        //    player.AddForce(new Vector2(dashSpeed, 0), ForceMode2D.Impulse);
-        //    movementEnabled = true;
-        //}
     }
 
 
