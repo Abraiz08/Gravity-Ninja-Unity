@@ -9,7 +9,7 @@ using UnityEngine;
  * add projectiles
  * add enemies
  * add score 
- * 
+ * add art and animation
  */
 public class PlayerMovement : MonoBehaviour
 {
@@ -102,15 +102,16 @@ public class PlayerMovement : MonoBehaviour
             {
                 return;
             }
-            LockMovement();
             playerVel = player.velocity;
             if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
             {
+                LockMovement();
                 player.AddForce(new Vector2(dashSpeed, 0), ForceMode2D.Impulse);
                 Invoke("CompleteDash", dashTime);
             }
             else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
             {
+                LockMovement();
                 player.AddForce(new Vector2(-dashSpeed, 0), ForceMode2D.Impulse);
                 Invoke("CompleteDash", dashTime);
             }
