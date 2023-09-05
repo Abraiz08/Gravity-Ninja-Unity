@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3823477311415172012}
   - component: {fileID: 5411413634529802361}
   m_Layer: 0
-  m_Name: EnemyLight
+  m_Name: EnemyBasic
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,6 +95,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6112efe1191ba1c4c88cbfe207dbcca1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyMaxHealth: 10
+  enemyDamage: 1
 --- !u!114 &292368024044467375
 MonoBehaviour:
   m_ObjectHideFlags: 0

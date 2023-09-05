@@ -5,13 +5,12 @@ using UnityEngine;
 
 //to do 
 /**
- * stop gravity flipping mid air?
- * add projectiles
- * add enemies
- * add score 
+ * make the game shut down on over
+ * add enemy spawning
+ * add score and ui
  * add art and animation
  */
-public class PlayerMovement : MonoBehaviour
+public class PlayerBehaviour : MonoBehaviour
 {
     Rigidbody2D player;
     [Header("Movement")]
@@ -23,6 +22,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float dashTime = 1f;
     [SerializeField] float dashCooldown = 1f;
     float lastDash = 0f;
+
+    [Header("Stats")]
+    [SerializeField] float playerHealth = 5f;
 
     bool movementEnabled = true;
     bool limitVelocity = true;
@@ -140,5 +142,18 @@ public class PlayerMovement : MonoBehaviour
         player.velocity = new Vector2(playerVel.x, player.velocity.y);
     }
 
+    public void TakeDamage(float damage)
+    {
+        playerHealth -= damage;
 
+        Debug.Log("Player health: " + playerHealth);
+
+        if (playerHealth <= 0)
+        {
+            Debug.Log("Game Over");
+            Application.Quit();
+            UnityEditor.EditorApplication.isPlaying = false;
+
+        }
+    }
 }
